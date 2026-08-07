@@ -1,0 +1,6 @@
+# NODE7 framework order
+ensure node7-core
+ensure node7-player-status
+
+# Optional integration
+ensure node7-radio

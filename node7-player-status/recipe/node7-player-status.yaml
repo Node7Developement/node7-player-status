@@ -1,0 +1,11 @@
+name: node7-player-status
+version: 1.1.0-node7.1
+author: NODE7 Development Studios
+description: NODE7 recipe-ready RedM player and economy status overlay.
+
+resources:
+  - resource: node7-core
+  - resource: node7-player-status
+
+config:
+  - recipe/node7-player-status.cfg
