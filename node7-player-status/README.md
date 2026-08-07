@@ -1,6 +1,6 @@
 # node7-player-status
 
-Recipe-ready transparent RedM status overlay built specifically for `node7-core`.
+Recipe-ready transparent RedM status HUD built specifically for `node7-core`.
 
 ## Displays
 
@@ -28,8 +28,8 @@ exec @node7-player-status/recipe/node7-player-status.cfg
 
 `node7-radio` is optional and is detected only when running.
 
-The package contains no SQL, external icon library, or CDN. Every icon is a local inline SVG. The overlay never takes NUI focus and remains hidden during charselect, logout, and the native pause menu.
+The package contains no SQL, external icon library, or CDN. Every icon is a local inline SVG. The HUD never takes NUI focus and remains hidden during charselect, logout, the native pause frontend, and RedM's full native map UIAPP.
 
-## Visual polish
+## Interface
 
-The overlay includes a restrained NODE7 polish pass: a short entrance settle, rare micro-sparks around economy entries, subtle money-change feedback, and a brass highlight for active duty/radio states. The layout, transparency, and passive no-focus behavior remain unchanged.
+Version `1.2.0-node7.1` uses a compact futuristic-western NODE7 telemetry style with angular smoked plates, brass/ember accents, clear economy labels, and restrained value feedback. The browser canvas, `html`, `body`, and full HUD root remain forced transparent; only the small status elements themselves use translucent surfaces. No fullscreen overlay or black-screen layer is included.

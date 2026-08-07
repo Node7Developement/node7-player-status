@@ -1,4 +1,12 @@
-# Versions
+# NODE7 Player Status Versions
+
+## 1.2.0-node7.1
+- Added direct RedM native `map` UIAPP detection matching `node7-voice`.
+- HUD now hides immediately during map open, close, and transition states.
+- Rebuilt the interface as a compact futuristic-western telemetry style.
+- Forced the entire NUI canvas to remain transparent with no fullscreen overlay.
+- Preserved NODE7 player-load lifecycle, economy, radio, and recipe integration.
+
 
 ## 1.1.1-node7.1
 

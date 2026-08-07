@@ -1,7 +1,7 @@
 name: node7-player-status
-version: 1.1.0-node7.1
+version: 1.2.0-node7.1
 author: NODE7 Development Studios
-description: NODE7 recipe-ready RedM player and economy status overlay.
+description: NODE7 transparent futuristic-western RedM player and economy status HUD.
 
 resources:
   - resource: node7-core

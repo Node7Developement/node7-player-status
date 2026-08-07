@@ -6,8 +6,8 @@ rdr3_warning 'I acknowledge that this is a prerelease build of RedM, and I am aw
 lua54 'yes'
 
 author 'NODE7 Development Studios'
-description 'NODE7 recipe-ready player, duty, time, radio, population and economy status overlay for RedM.'
-version '1.1.1-node7.1'
+description 'NODE7 futuristic western player, duty, time, radio, population and economy status HUD for RedM.'
+version '1.2.0-node7.1'
 
 ui_page 'html/index.html'
 

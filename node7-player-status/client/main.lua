@@ -2,6 +2,8 @@ local RESOURCE = GetCurrentResourceName()
 local Core
 local playerLoaded = false
 local pauseMenuOpen = false
+local nativeFrontendOpen = false
+local MAP_UIAPP_HASH = GetHashKey('map')
 local onlinePlayers = 0
 local lastPayload
 local radioFrequency = 0.0
@@ -53,24 +55,58 @@ local function isActuallyLoaded()
     return playerLoaded == true
 end
 
-local function readPauseState()
-    if Config.HideDuringPauseMenu == false then return false end
+local function nativeReturnedTrue(value)
+    return value == true or value == 1
+end
+
+local function invokeBool(nativeHash, ...)
+    local ok, result = pcall(Citizen.InvokeNative, nativeHash, ...)
+    return ok and nativeReturnedTrue(result)
+end
+
+local function isNativeMapOpen()
+    -- RedM's full-screen map is the native UIAPP named `map`. Generic pause
+    -- checks do not reliably report it, so match node7-voice and query the
+    -- UIAPP directly, including opening and closing transitions.
+    return invokeBool(0x25B7A0206BDFAC76, MAP_UIAPP_HASH)
+        or invokeBool(0x4E511D093A86AD49, MAP_UIAPP_HASH)
+        or invokeBool(0x42095B886D30DE66, MAP_UIAPP_HASH)
+end
+
+local function readNativeFrontendState()
+    if isNativeMapOpen() then
+        return true
+    end
 
     if LocalPlayer and LocalPlayer.state and LocalPlayer.state.node7PauseMenuOpen == true then
         return true
     end
 
+    local core = getCore()
+    if core and GetResourceState(Config.CoreResource) == 'started' then
+        local ok, result = pcall(function()
+            return exports[Config.CoreResource]:IsPauseMenuOpen()
+        end)
+        if ok and result == true then return true end
+    end
+
     if type(IsPauseMenuActive) == 'function' then
         local ok, active = pcall(IsPauseMenuActive)
-        if ok and active == true then return true end
+        if ok and nativeReturnedTrue(active) then return true end
     end
 
     if type(GetPauseMenuState) == 'function' then
         local ok, state = pcall(GetPauseMenuState)
-        if ok and tonumber(state) and tonumber(state) > 0 then return true end
+        state = ok and tonumber(state) or 0
+        if state and state > 0 then return true end
     end
 
     return pauseMenuOpen == true
+end
+
+local function readPauseState()
+    if Config.HideDuringPauseMenu == false then return false end
+    return nativeFrontendOpen == true or readNativeFrontendState()
 end
 
 local function formatGameTime()
@@ -185,6 +221,7 @@ end)
 
 RegisterNetEvent('Node7Core:Client:OnPlayerUnload', function()
     playerLoaded = false
+    nativeFrontendOpen = false
     lastPayload = nil
     sendStatus(true)
 end)
@@ -284,6 +321,27 @@ AddEventHandler('onClientResourceStop', function(resourceName)
         sendStatus(true)
     elseif resourceName == RESOURCE then
         SendNUIMessage({ action = 'visibility', visible = false })
+    end
+end)
+
+-- Fast RedM native-map watcher. NUI is only updated when the frontend
+-- state changes, keeping the HUD responsive without spamming messages.
+CreateThread(function()
+    while true do
+        if Config.HideDuringPauseMenu ~= false and isActuallyLoaded() then
+            local open = readNativeFrontendState()
+            if open ~= nativeFrontendOpen then
+                nativeFrontendOpen = open
+                sendStatus(true)
+            end
+            Wait(25)
+        else
+            if nativeFrontendOpen then
+                nativeFrontendOpen = false
+                sendStatus(true)
+            end
+            Wait(250)
+        end
     end
 end)
 
